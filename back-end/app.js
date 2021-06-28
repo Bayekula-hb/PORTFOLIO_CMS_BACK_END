@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql");
 
-
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -18,13 +17,14 @@ connection.connect((error) => {
       console.log(
         `impossible de se connecter à la base de données suite à : ${error}`
       );
+    } else {
+      console.log("connexion avec la base de données établie");
     }
-    console.log("connexion avec la base de données établie");
   }
 });
 
-app.get("/database/apprenants", (req, res) => {
-  connection.query("SELECT * FROM apprenants", (error, result) => {
+app.get("/api/projects", (req, res) => {
+  connection.query("SELECT * FROM projects", (error, result) => {
     if (error) {
       res
         .status(500)
@@ -33,22 +33,24 @@ app.get("/database/apprenants", (req, res) => {
     res.status(200).json(result);
   });
 });
-app.post("/database/apprenants", (req, res) => {
+app.post("/api/projects", (req, res) => {
   const {
-    nom_apprenant,
-    mail_apprenant,
-    address_apprenant,
-    telephone_apprenant,
-    id_cohorte,
+    name_project,
+    description_project,
+    link_gitHub_project,
+    link_NetliFy_project,
+    picture_project,
   } = req.body;
+
+  // console.log(` Data : ${description_project} `);
   connection.query(
-    "INSERT INTO apprenants (nom_apprenant, mail_apprenant,address_apprenant,telephone_apprenant,id_cohorte) VALUES (?,?,?,?,?)",
+    "INSERT INTO projects (name_projects, description_projects, link_github,	link_netlify,	picture	) VALUES (?,?,?,?,?)",
     [
-      nom_apprenant,
-      mail_apprenant,
-      address_apprenant,
-      telephone_apprenant,
-      id_cohorte,
+      name_project,
+      description_project,
+      link_gitHub_project,
+      link_NetliFy_project,
+      picture_project,
     ],
     (error, result) => {
       if (error) {
@@ -93,7 +95,7 @@ app.put("/database/apprenants", (req, res) => {
             if (error) {
               res.status(404).json({ message: "L'opération non aboutie" });
             }
-            res.status(200).json(result)
+            res.status(200).json(result);
           }
         );
       }
@@ -113,12 +115,15 @@ app.delete("/database/apprenants", (req, res) => {
         res.status(404).json({ message: "L'apprenant non trouvé" });
       } else {
         connection.query(
-          "DELETE FROM apprenants WHERE id_apprenant = ?",[ id_apprenant],
+          "DELETE FROM apprenants WHERE id_apprenant = ?",
+          [id_apprenant],
           (error, result) => {
             if (error) {
-              res.status(404).json({ message: `L'opération non aboutie : ${error}` });
+              res
+                .status(404)
+                .json({ message: `L'opération non aboutie : ${error}` });
             }
-            res.status(200).json(result)
+            res.status(200).json(result);
           }
         );
       }
