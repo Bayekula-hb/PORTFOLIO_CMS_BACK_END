@@ -33,6 +33,7 @@ app.get("/api/projects", (req, res) => {
     res.status(200).json(result);
   });
 });
+
 app.post("/api/projects", (req, res) => {
   const {
     name_project,
@@ -41,8 +42,6 @@ app.post("/api/projects", (req, res) => {
     link_NetliFy_project,
     picture_project,
   } = req.body;
-
-  // console.log(` Data : ${description_project} `);
   connection.query(
     "INSERT INTO projects (name_projects, description_projects, link_github,	link_netlify,	picture	) VALUES (?,?,?,?,?)",
     [
@@ -55,13 +54,15 @@ app.post("/api/projects", (req, res) => {
     (error, result) => {
       if (error) {
         res.send({
-          message: "impossible d'insére les éléments à la base de donnée",
+          message: "impossible d'insére l'élément à la base de donnée",
         });
       }
+      console.log(`${result} : resultat`);
       res.send({ message: "Enregistrement effectué avec succès" });
     }
   );
 });
+
 app.put("/database/apprenants", (req, res) => {
   const {
     id_apprenant,
@@ -127,39 +128,6 @@ app.delete("/database/apprenants", (req, res) => {
           }
         );
       }
-    }
-  );
-});
-//cohorte
-app.get("/database/cohorte", (req, res) => {
-  connection.query("SELECT * FROM cohorte", (error, result) => {
-    if (error) {
-      res
-        .status(500)
-        .json({ message: "impossible d'accèder à la base de donnée" });
-    }
-    res.status(200).json(result);
-  });
-});
-
-app.post("/database/cohorte", (req, res) => {
-  const {
-    id_cohorte: id,
-    nom_cohorte: nom,
-    date_debut: da_d,
-    date_fin: da_fin,
-    nombre_apprenants: nbre,
-  } = req.body;
-  connection.query(
-    "INSERT INTO cohorte (id_cohorte, nom_cohorte,	date_debut,	date_fin, nombre_apprenants	) VALUES (?,?,?,?,?)",
-    [id, nom, da_d, da_fin, nbre],
-    (error, result) => {
-      if (error) {
-        res.status(500).json({
-          message: "impossible d'insére les éléments à la base de donnée",
-        });
-      }
-      res.status(200).json({ message: "Enregistrement effectué avec succès" });
     }
   );
 });
