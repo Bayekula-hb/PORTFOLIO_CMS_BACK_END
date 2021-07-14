@@ -63,7 +63,7 @@ app.post("/api/projects", (req, res) => {
   );
 });
 
-app.put("/database/apprenants", (req, res) => {
+app.put("/api/projects", (req, res) => {
   const {
     id_apprenant,
     nom_apprenant,
@@ -73,7 +73,7 @@ app.put("/database/apprenants", (req, res) => {
     id_cohorte,
   } = req.body;
   connection.query(
-    "SELECT * FROM apprenants WHERE id_apprenant = ?",
+    "SELECT * FROM projects WHERE id_apprenant = ?",
     [id_apprenant],
     (error, result) => {
       if (error) {
@@ -83,7 +83,7 @@ app.put("/database/apprenants", (req, res) => {
         res.status(404).json({ message: "L'apprenant non trouvé" });
       } else {
         connection.query(
-          "UPDATE apprenants SET nom_apprenant = ? , mail_apprenant = ?,address_apprenant = ?,telephone_apprenant = ?,id_cohorte  = ? WHERE id_apprenant = ?",
+          "UPDATE projects SET nom_apprenant = ? , mail_apprenant = ?,address_apprenant = ?,telephone_apprenant = ?,id_cohorte  = ? WHERE id_apprenant = ?",
           [
             nom_apprenant,
             mail_apprenant,
@@ -103,31 +103,32 @@ app.put("/database/apprenants", (req, res) => {
     }
   );
 });
-app.delete("/database/apprenants", (req, res) => {
-  const { id_apprenant } = req.body;
+
+app.delete("/api/projects/:id", (req, res) => {
+  const { id } = req.params;
   connection.query(
-    "SELECT * FROM apprenants WHERE id_apprenant = ?",
-    [id_apprenant],
+    "SELECT * FROM projects WHERE id_projects = ?",
+    [id],
     (error, result) => {
       if (error) {
         res.status(404).json({ message: "L'opération non aboutie" });
       }
-      if (isObjectEmpty(result)) {
-        res.status(404).json({ message: "L'apprenant non trouvé" });
-      } else {
-        connection.query(
-          "DELETE FROM apprenants WHERE id_apprenant = ?",
-          [id_apprenant],
-          (error, result) => {
-            if (error) {
-              res
-                .status(404)
-                .json({ message: `L'opération non aboutie : ${error}` });
-            }
-            res.status(200).json(result);
+      // if (isObjectEmpty(result)) {
+      //   res.status(404).json({ message: "Aucun projet trouver" });
+      // } else {
+      connection.query(
+        "DELETE FROM projects WHERE id_projects = ?",
+        [id],
+        (error, result) => {
+          if (error) {
+            res
+              .status(404)
+              .json({ message: `L'opération non aboutie : ${error}` });
           }
-        );
-      }
+          res.status(200).json(result);
+        }
+      );
+      // }
     }
   );
 });
